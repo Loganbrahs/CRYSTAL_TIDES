@@ -1,0 +1,14 @@
+package monsters;
+
+import entity.Enemy;
+
+public class DireWolf extends Enemy{
+	////////////////////////////////////////////////////////////
+	public DireWolf() {
+		name = "Dire Wolf";
+		hp = 200;
+		statPower = 10;
+		expWorth = 20;
+	}
+	////////////////////////////////////////////////////////////
+}

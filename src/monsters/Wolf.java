@@ -1,0 +1,14 @@
+package monsters;
+
+import entity.Enemy;
+
+public class Wolf extends Enemy{
+	////////////////////////////////////////////////////////////
+	public Wolf() {
+		name = "Wolf";
+		hp = 100;
+		statPower = 5;
+		expWorth = 10;
+	}
+	////////////////////////////////////////////////////////////
+}
