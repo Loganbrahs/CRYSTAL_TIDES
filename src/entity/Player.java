@@ -41,7 +41,7 @@ public class Player extends Entity {
 		Area = "town";
 		SubArea = 1;
 		itemAmount = 0;
-		luminiteAmount = 12124124;
+		luminiteAmount = 1212412;
 		
 		x = 7 * gp.tileSize;
 		y = 8 * gp.tileSize;
@@ -211,5 +211,10 @@ public class Player extends Entity {
 		g2.setColor(Color.pink);
 		g2.draw(hitBox);
 	}
+	public void freeze() {
+	    System.out.println("⚡ Player is frozen during battle.");
+	    this.speed = 0; // Prevents player movement during battle
+	}
+
 	////////////////////////////////////////////////////////////
 }
