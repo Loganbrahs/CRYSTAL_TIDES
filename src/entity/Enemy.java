@@ -33,12 +33,12 @@ public class Enemy extends Entity {
         hitBox.x = x;
         hitBox.y = y;
         hitBox.width = gp.tileSize;
-        hitBox.height = gp.tileSize * 2; // Double the height to match the sprite
+        hitBox.height = gp.tileSize; // Double the height to match the sprite
     }
 	
 	public void getEnemyImage() {
         try {
-            enemyImage = ImageIO.read(getClass().getResourceAsStream("/knight/knightFront-idle1.png"));
+            enemyImage = ImageIO.read(getClass().getResourceAsStream("/monsters/orc_front.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,7 +50,12 @@ public class Enemy extends Entity {
 	}
 	
 	public void draw(Graphics2D g2) {
-		g2.drawImage(enemyImage, x, y, gp.tileSize, gp.tileSize * 2, null);
+		g2.drawImage(enemyImage, x, y, gp.tileSize, gp.tileSize, null);
+	}
+	
+	public void freeze() {
+	    System.out.println("⚡ Enemy is frozen during battle.");
+	    this.speed = 0; // Prevents enemy movement during battle
 	}
 	
 }
