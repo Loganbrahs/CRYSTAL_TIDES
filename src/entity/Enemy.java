@@ -19,6 +19,7 @@ public class Enemy extends Entity {
 	int enemyAmount;
 	int enemyType;
 	String enemyPosition;
+	public boolean isDefeated = false; // Track if the enemy has been defeated
 	
 	public Enemy(GamePanel gp) {
 		this.gp = gp;
@@ -33,24 +34,41 @@ public class Enemy extends Entity {
         hitBox.x = x;
         hitBox.y = y;
         hitBox.width = gp.tileSize;
-        hitBox.height = gp.tileSize * 2; // Double the height to match the sprite
+        hitBox.height = gp.tileSize; // Double the height to match the sprite
     }
 	
 	public void getEnemyImage() {
         try {
-            enemyImage = ImageIO.read(getClass().getResourceAsStream("/knight/knightFront-idle1.png"));
+            enemyImage = ImageIO.read(getClass().getResourceAsStream("/monsters/orc_front.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 	
 	public void update() {
-		hitBox.x = x;
-	    hitBox.y = y;
+	    if (!isDefeated) {
+	        hitBox.x = x;  
+	        hitBox.y = y;  
+	    } else {
+	        // ✅ Move enemy completely off-screen
+	        System.out.println("🚨 Moving defeated enemy off-screen...");
+	        x = -1000;
+	        y = -1000;
+	        hitBox.setBounds(-1000, -1000, 0, 0);  // Remove hitbox
+	    }
 	}
 	
 	public void draw(Graphics2D g2) {
-		g2.drawImage(enemyImage, x, y, gp.tileSize, gp.tileSize * 2, null);
+	    if (isDefeated) {
+	        return; // ✅ Skip drawing if the enemy is defeated
+	    }
+
+	    g2.drawImage(enemyImage, x, y, gp.tileSize, gp.tileSize, null);
+	}
+	
+	public void freeze() {
+	    System.out.println("⚡ Enemy is frozen during battle.");
+	    this.speed = 0; // Prevents enemy movement during battle
 	}
 	
 }

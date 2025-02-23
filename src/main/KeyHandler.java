@@ -23,6 +23,11 @@ public class KeyHandler implements KeyListener{
 		
 		int code = e.getKeyCode();
 		
+		if (code == KeyEvent.VK_ENTER) {
+	        enterPressed = true;
+	        System.out.println("🔵 ENTER key detected in KeyHandler!");  // 🔴 Debug
+	    }
+		
 		if(gp.gameState == gp.titleState) {
 			if(code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
 				upPressed = true;
@@ -53,6 +58,23 @@ public class KeyHandler implements KeyListener{
 			if(code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
 				rightPressed = true;
 			}
+		}
+		
+		if (gp.gameState == gp.battleState) {
+		    if (code == KeyEvent.VK_ENTER) {
+		        enterPressed = true;
+		        System.out.println("⚔ ENTER detected for attack!");
+		    }
+
+		    if (code == KeyEvent.VK_LEFT) {
+		        leftPressed = true;
+		        System.out.println("⬅ LEFT detected for enemy selection!");
+		    }
+
+		    if (code == KeyEvent.VK_RIGHT) {
+		        rightPressed = true;
+		        System.out.println("➡ RIGHT detected for enemy selection!");
+		    }
 		}
 		
 		if(gp.gameState == gp.menuState) {
@@ -101,6 +123,20 @@ public class KeyHandler implements KeyListener{
 			}
 		}
 		
+		if (gp.gameState == gp.battleState) {
+		    if (code == KeyEvent.VK_ENTER) {
+		        enterPressed = false;
+		    }
+
+		    if (code == KeyEvent.VK_LEFT) {
+		        leftPressed = false;
+		    }
+
+		    if (code == KeyEvent.VK_RIGHT) {
+		        rightPressed = false;
+		    }
+		}
+
 		if(gp.gameState == gp.menuState) {
 			//menu logic goes here
 		}

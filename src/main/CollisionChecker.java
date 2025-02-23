@@ -2,6 +2,8 @@ package main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import entity.Enemy;
 import entity.Entity;
 import maps.Map;
 
@@ -54,12 +56,21 @@ public class CollisionChecker {
 	}
 	
 	public void checkCollisions(Entity player, Entity enemy, Map map) {
-	    // Only check for collisions if the enemy is in the current area
+	    if (enemy instanceof Enemy) {
+	        Enemy e = (Enemy) enemy;
+	        if (e.isDefeated || gp.gameState == gp.battleState) {
+	            return; // ✅ Skip collision if enemy is defeated or battle is active
+	        }
+	    }
+
 	    if (map.currentArea.equals("town") && map.currentSubArea == 1) {
 	        if (player.hitBox.intersects(enemy.hitBox)) {
-	            gp.gameState = gp.battleState; // Switch to battle screen when touching
-	        }
+	            System.out.println("⚔ Collision detected! Battle starts.");
+	            gp.gameState = gp.battleState;
 	        }
 	    }
 	}
 
+}
+
+	      

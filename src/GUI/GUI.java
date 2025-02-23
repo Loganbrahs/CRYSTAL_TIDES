@@ -20,13 +20,15 @@ public class GUI {
 	Player player;
 	Map map;
 	
-	private BufferedImage titleImg, hudImg, mapImg, optionImg, areaImg;
+	public BufferedImage titleImg, hudImg, mapImg, optionImg, areaImg;
 	private BufferedImage healthFull, healthHalf, healthEmpty;
 	private String titlePath, hudPath, mapPath, areaPath;
 	private String itemFormat, luminiteFormat;
 	private int itemNumber, luminiteNumber;
 	private int itemLength, luminiteLength;
-	private int optionState;
+	public int optionState;
+	public BufferedImage battleScreen;
+	public int playerTurnState;
 	
 	////////////////////////////////////////////////////////////
 	public GUI(GamePanel gp, KeyHandler keyH, Player player, Map map) {
@@ -46,21 +48,31 @@ public class GUI {
 		luminiteNumber = 6;
 	}
 	////////////////////////////////////////////////////////////
-	public void getGUIImage() {			
-		try {
-			titleImg = ImageIO.read(getClass().getResourceAsStream(titlePath));
-			hudImg = ImageIO.read(getClass().getResourceAsStream(hudPath));
-			mapImg = ImageIO.read(getClass().getResourceAsStream(mapPath));
-			areaImg = ImageIO.read(getClass().getResourceAsStream(areaPath));
-			
-			healthFull = ImageIO.read(getClass().getResourceAsStream("/health/healthFull.png"));
-			healthHalf = ImageIO.read(getClass().getResourceAsStream("/health/healthHalf.png"));
-			healthEmpty = ImageIO.read(getClass().getResourceAsStream("/health/healthEmpty.png"));
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
+	public void getGUIImage() {            
+	    try {
+	        titleImg = ImageIO.read(getClass().getResourceAsStream(titlePath));
+	        hudImg = ImageIO.read(getClass().getResourceAsStream(hudPath)); // ✅ Load HUD
+	        mapImg = ImageIO.read(getClass().getResourceAsStream(mapPath));
+	        areaImg = ImageIO.read(getClass().getResourceAsStream(areaPath));
+
+	        if (battleScreen == null) {  // ✅ Only load if it's not already loaded
+	            battleScreen = ImageIO.read(getClass().getResourceAsStream("/hud/battle.png"));
+	            //System.out.println("✅ battleScreen loaded successfully.");
+	        }
+
+	        if (hudImg != null) {
+	            //System.out.println("✅ game-hud.png loaded successfully.");
+	        }
+
+	        healthFull = ImageIO.read(getClass().getResourceAsStream("/health/healthFull.png"));
+	        healthHalf = ImageIO.read(getClass().getResourceAsStream("/health/healthHalf.png"));
+	        healthEmpty = ImageIO.read(getClass().getResourceAsStream("/health/healthEmpty.png"));
+	    }
+	    catch(IOException e) {
+	        e.printStackTrace();
+	    }
 	}
+	
 	////////////////////////////////////////////////////////////
 	public void getGUIPath() {
 		titlePath = "/title/title.png";
@@ -176,52 +188,79 @@ public class GUI {
 	}
 	////////////////////////////////////////////////////////////
 	public void update() {
-		getGUIPath();
-		getGUIImage();
-		
-		if(gp.gameState == gp.titleState) {
-			getOptionPath();
-			
-			if(keyH.upPressed == true && optionState > 1 ) {
-				optionState--;
-			}
-			
-			if(keyH.downPressed == true && optionState < 3) {
-				optionState++;
-			}
-			
-			if(keyH.enterPressed == true) {
-				switch(optionState) {
-				case 1: gp.gameState = 2; break;
-				case 2: gp.gameState = 2; break; //save logic goes here
-				case 3: gp.gameState = 0; break; //exits game
-				}
-			}
-		}
+	    if (gp.gameState == gp.titleState) {
+	        getGUIPath();
+	        getGUIImage(); // ✅ Ensure title screen loads
+	        getOptionPath();
+	        
+	        if (keyH.upPressed && optionState > 1) {
+	            optionState--;
+	        }
+	        if (keyH.downPressed && optionState < 3) {
+	            optionState++;
+	        }
+	        if (keyH.enterPressed) {
+	            switch (optionState) {
+	                case 1: gp.gameState = gp.playState; break;
+	                case 2: gp.gameState = gp.playState; break; // Placeholder for save logic
+	                case 3: System.exit(0); break; // Exits game
+	            }
+	        }
+	    }
+
+	    if (gp.gameState == gp.playState) {
+	        getGUIPath();
+	        getGUIImage(); // ✅ Ensure play state assets (town, etc.) load
+	    }
+
+	    if (gp.gameState == gp.battleState) {
+	        if (battleScreen == null) {
+	            System.out.println("🔄 Loading battle assets...");
+	            getGUIPath();
+	            getGUIImage(); // ✅ Load battle assets ONCE
+	        }
+	    }
 	}
+
 	////////////////////////////////////////////////////////////
 	public void draw(Graphics2D g2) {
-		if(gp.gameState == gp.titleState) {
-			g2.drawImage(titleImg, 0, 0, 960, 720, null);
-			g2.drawImage(optionImg, 0, 0, 960, 720, null);
-		}
-		
-		if(gp.gameState == gp.playState) {
-			g2.drawImage(hudImg, 0, 0, 960, 720, null);
-			g2.drawImage(mapImg, 0, 0, 960, 720, null);
-			g2.drawImage(areaImg, 0, 0, 960, 720, null);
-			drawHealth(g2);
-			drawNumbers(g2);
-		}
-		
-		if(gp.gameState == gp.menuState) {
-			//menu logic goes here
-			//basically your party, status, inventory, settings, and exit
-		}
-		if(gp.gameState == gp.pauseState) {
-			//pause logic goes here
-			//reserved for events that do not require player input
-		}
+	    if (gp.gameState == gp.titleState) {
+	        g2.drawImage(titleImg, 0, 0, 960, 720, null);
+	        g2.drawImage(optionImg, 0, 0, 960, 720, null);
+	    }
+
+	    if (gp.gameState == gp.playState) {
+	        g2.drawImage(hudImg, 0, 0, 960, 720, null);
+	        g2.drawImage(mapImg, 0, 0, 960, 720, null);
+	        g2.drawImage(areaImg, 0, 0, 960, 720, null);
+	        drawHealth(g2);
+	        drawNumbers(g2);
+	    }
+
+	    if (gp.gameState == gp.battleState) {
+	        // ✅ Draw battle screen background
+	        if (battleScreen != null) {
+	            g2.drawImage(battleScreen, 0, 0, gp.screenWidth, gp.screenHeight, null);
+	        } else {
+	            System.out.println("❌ battle.png is NULL!");
+	        }
+
+	        // ✅ Draw HUD elements on top of battle.png
+	        drawHealth(g2);
+	        drawNumbers(g2);
+	    }
 	}
+	
+	/////////////////////////////////////////////////////////////
+	public void drawBattleBackground(Graphics2D g2) {
+	    if (gp.gameState == gp.battleState) {
+	        if (battleScreen != null) {
+	            g2.drawImage(battleScreen, 0, 0, gp.screenWidth, gp.screenHeight, null);
+	        } else {
+	            System.out.println("❌ battle.png is NULL!");
+	        }
+	    }
+	}
+
 	////////////////////////////////////////////////////////////
 }
